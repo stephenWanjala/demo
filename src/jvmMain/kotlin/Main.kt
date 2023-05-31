@@ -18,7 +18,7 @@ fun App(
     currentScreen: Screen = Screen.LOGIN,
     onSignUpClick: () -> Unit,
     onLoginClick: () -> Unit,
-    NavigateToHome: () -> Unit
+    navigateToHome: () -> Unit
 
 ) {
 
@@ -41,7 +41,7 @@ fun App(
                 Screen.SIGNUP -> {
                     SignUpScreen(
                         onLoginClick = onLoginClick,
-                        onSignUpClick = NavigateToHome
+                        onSignUpClick = navigateToHome
                     )
                 }
 
@@ -68,7 +68,7 @@ fun main() = application {
             onLoginClick = {
                 currentScreen = Screen.LOGIN
             },
-            NavigateToHome = {
+            navigateToHome = {
                 currentScreen = Screen.HOME
             })
     }
