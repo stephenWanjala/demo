@@ -22,7 +22,16 @@ kotlin {
     sourceSets {
         val jvmMain by getting {
             dependencies {
+                val ktorVersion = "1.6.3"
+//                val ktorVersion = "2.3.0"
                 implementation(compose.desktop.currentOs)
+                implementation("org.jetbrains.compose.material3:material3-desktop:1.2.1")
+                implementation("io.ktor:ktor-client-apache:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+
             }
         }
         val jvmTest by getting
