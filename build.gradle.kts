@@ -26,11 +26,17 @@ kotlin {
 //                val ktorVersion = "2.3.0"
                 implementation(compose.desktop.currentOs)
                 implementation("org.jetbrains.compose.material3:material3-desktop:1.2.1")
+
+                //ktor
                 implementation("io.ktor:ktor-client-apache:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
+
+                //material icons
+                implementation("org.jetbrains.compose.material:material-icons-extended:1.0.0-rc11")
+
 
             }
         }
