@@ -6,6 +6,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.5.31"
 }
 
+
+
+
 group = "com.github.wanjalaStephen"
 version = "1.0-SNAPSHOT"
 
@@ -39,9 +42,15 @@ kotlin {
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.0.0-rc11")
 
 
+
+
             }
+
+
         }
         val jvmTest by getting
+
+
     }
 }
 
