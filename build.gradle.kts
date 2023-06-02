@@ -41,6 +41,11 @@ kotlin {
                 //material icons
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.0.0-rc11")
 
+                implementation("io.jsonwebtoken:jjwt-api:0.11.2")
+                implementation("io.jsonwebtoken:jjwt-impl:0.11.2")
+                implementation("io.jsonwebtoken:jjwt-jackson:0.11.2")
+
+
 
 
 
