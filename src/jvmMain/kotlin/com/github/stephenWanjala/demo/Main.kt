@@ -10,7 +10,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.github.stephenWanjala.demo.core.data.repositoryImpl.AuthRepositoryImpl
-import com.github.stephenWanjala.demo.core.presentation.AuthPresenter
 import com.github.stephenWanjala.demo.core.util.Screen
 import com.github.stephenWanjala.demo.domain.repository.AuthRepository
 import com.github.stephenWanjala.demo.home.presentation.HomeScreen
@@ -68,7 +67,7 @@ fun App(
                 Screen.SIGNUP -> {
                     SignUpScreen(
                         onLoginClick = onLoginClick,
-                        onSignUpClick = {name: String, email: String, password: String ->
+                        onSignUpClick = { name: String, email: String, password: String ->
                             println("Name: $name")
                             println("Email: $email")
                             println("Password: $password")
@@ -97,8 +96,6 @@ fun main() = application {
         val authRepository: AuthRepository = AuthRepositoryImpl(
             client = provideClient()
         )
-
-
 
 
         var currentScreen by remember {
