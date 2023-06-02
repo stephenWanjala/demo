@@ -19,31 +19,36 @@ import com.github.stephenWanjala.demo.core.presentation.components.PasswordTextF
 @Composable
 fun LoginForm(
     onSignupClick: () -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onLoginEmailChange:(String)->Unit,
+    onLoginPassword:(String)->Unit,
+    loginButtonEnabled:Boolean,
+    email:String,
+    password:String
 ) {
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         InputTextField(
-            textValue = email.value,
-            onValueChange = { email.value = it },
-            labelText = "email"
+            textValue = email,
+            onValueChange = onLoginEmailChange,
+            labelText = "Email"
         )
         PasswordTextField(
-            textValue = password.value,
-            onValueChange = { password.value = it },
-            labelText = "password",
-            placeHolder = "password"
+            textValue = password,
+            onValueChange = onLoginPassword,
+            labelText = "Password",
+            placeHolder = "Password"
 
         )
 
         Button(
             onClick = onLoginClick,
-            modifier = Modifier
+            modifier = Modifier,
+            enabled = loginButtonEnabled
         ) {
             Text("Login")
         }

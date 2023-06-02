@@ -14,6 +14,8 @@ class AuthPresenter(
     private val authRepository: AuthRepository,
     private val scope: CoroutineScope
 ) {
+    private val emailRegex = Regex("^([a-zA-Z0-9_.+-]+)@([a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+)$")
+
     private var _loginState = MutableStateFlow(LoginState())
     val loginState = _loginState.stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), LoginState())
 
@@ -48,14 +50,16 @@ class AuthPresenter(
         when (event) {
             is LoginEvent.EnterEmail -> {
                 _loginState.update { it.copy(email = event.value) }
+                validLoginInputs()
             }
 
             is LoginEvent.EnteredPassword -> {
                 _loginState.update { it.copy(password = event.value) }
+                validLoginInputs()
             }
 
             LoginEvent.IsLoginButtonEnabled -> {
-                _loginState.update { it.copy(loginButtonEnabled = (loginState.value.email.isNotBlank() && loginState.value.password.isNotEmpty() && loginState.value.password.length > 6)) }
+                validLoginInputs()
             }
 
             LoginEvent.Login -> {
@@ -65,28 +69,61 @@ class AuthPresenter(
 
     }
 
+    private fun validLoginInputs() {
+        _loginState.update {
+            it.copy(
+                loginButtonEnabled = (loginState.value.email.isNotBlank() && loginState.value.password.isNotEmpty() && loginState.value.password.length > 6
+                        && emailRegex.matches(loginState.value.email))
+            )
+        }
+    }
+
     fun onRegisterEvent(event: RegisterEvent) {
         when (event) {
             RegisterEvent.IsRegisterButtonEnabled -> {
                 _registerState.update {
                     it.copy(
-                        registerButtonEnabled = (
-                                _registerState.value.email.isNotBlank() &&
-                                        _registerState.value.password.isNotEmpty() &&
-                                        _registerState.value.password.length > 6
-                                )
+                        registerButtonEnabled = (validRegisterInputs())
                     )
                 }
             }
 
-            is RegisterEvent.RegisterEmail -> _registerState.update { it.copy(email = event.value) }
-            is RegisterEvent.RegisterName -> _registerState.update { it.copy(username = event.value) }
-            is RegisterEvent.RegisterPassword -> _registerState.update { it.copy(password = event.value) }
+            is RegisterEvent.RegisterEmail -> {
+                _registerState.update { it.copy(email = event.value) }
+                _registerState.update {
+                    it.copy(
+                        registerButtonEnabled = (validRegisterInputs())
+                    )
+                }
+            }
+            is RegisterEvent.RegisterName -> {
+                _registerState.update { it.copy(username = event.value) }
+                _registerState.update {
+                    it.copy(
+                        registerButtonEnabled = (validRegisterInputs())
+                    )
+                }
+            }
+            is RegisterEvent.RegisterPassword -> {
+                _registerState.update { it.copy(password = event.value.take(10)) }
+                _registerState.update {
+                    it.copy(
+                        registerButtonEnabled = (validRegisterInputs())
+                    )
+                }
+            }
             RegisterEvent.Register -> {
                 register()
             }
         }
     }
+
+    private fun validRegisterInputs() = (_registerState.value.email.isNotBlank() &&
+            _registerState.value.password.isNotEmpty() &&
+            _registerState.value.password.length > 6
+            && registerState.value.username.isNotBlank()
+            && registerState.value.username.length > 3
+            && emailRegex.matches(registerState.value.email))
 
     private fun login() {
         scope.launch {

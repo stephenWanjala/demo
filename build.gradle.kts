@@ -37,6 +37,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation ("io.ktor:ktor-client-cio:$ktorVersion")
 
                 //material icons
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.0.0-rc11")

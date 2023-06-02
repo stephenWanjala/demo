@@ -9,13 +9,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import com.github.stephenWanjala.demo.core.data.repositoryImpl.AuthRepositoryImpl
+import com.github.stephenWanjala.demo.core.presentation.AuthPresenter
 import com.github.stephenWanjala.demo.core.util.Screen
+import com.github.stephenWanjala.demo.domain.repository.AuthRepository
 import com.github.stephenWanjala.demo.home.presentation.HomeScreen
 import com.github.stephenWanjala.demo.login.LoginScreen
 import com.github.stephenWanjala.demo.signup.SignUpScreen
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.logging.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -30,9 +40,9 @@ fun App(
     onSignUpClick: () -> Unit,
     onLoginClick: () -> Unit,
     navigateToHome: () -> Unit,
-    token: String?
+    token: String?,
 
-) {
+    ) {
 
 
     MaterialTheme {
@@ -45,15 +55,26 @@ fun App(
             when (currentScreen) {
                 Screen.LOGIN -> {
                     LoginScreen(
-                        onSignUpClick = onSignUpClick,
-                        onLoginClick = navigateToHome
+                        onSignupClick = onSignUpClick,
+                        onLoginClick = { email: String, password: String ->
+                            println("Email: $email")
+                            println("Password: $password")
+                            navigateToHome()
+
+                        },
                     )
                 }
 
                 Screen.SIGNUP -> {
                     SignUpScreen(
                         onLoginClick = onLoginClick,
-                        onSignUpClick = navigateToHome
+                        onSignUpClick = {name: String, email: String, password: String ->
+                            println("Name: $name")
+                            println("Email: $email")
+                            println("Password: $password")
+                            navigateToHome()
+
+                        }
                     )
                 }
 
@@ -70,8 +91,14 @@ fun App(
 fun main() = application {
     Window(onCloseRequest = ::exitApplication) {
         val windowScope = rememberWindowState()
+        val scope = rememberCoroutineScope()
         val isLoggedIn = remember { mutableStateOf(false) }
         val token = remember { mutableStateOf("") }
+        val authRepository: AuthRepository = AuthRepositoryImpl(
+            client = provideClient()
+        )
+
+
 
 
         var currentScreen by remember {
@@ -94,7 +121,7 @@ fun main() = application {
             navigateToHome = {
                 currentScreen = Screen.HOME
             },
-            token = token.value
+            token = token.value,
         )
     }
 }
@@ -148,9 +175,35 @@ fun decodeJwt(token: String, secrete: String = System.getenv("JWT_SECRET")): Cla
     .body
 
 
+fun provideClient(token: String? = null): HttpClient {
+    val ktorClient = HttpClient(CIO) {
+        engine {
+            maxConnectionsCount = 1000
+            endpoint {
+                maxConnectionsPerRoute = 1000
+                pipelineMaxSize = 20
+                keepAliveTime = 5000
+                connectTimeout = 5000
+                socketTimeout = 5000
 
+            }
+        }
+        install(Logging) {
+            logger = Logger.DEFAULT
+            level = LogLevel.ALL
+        }
+        install(JsonFeature) {
+            serializer = KotlinxSerializer()
+        }
 
+        install(DefaultRequest) {
+            header(HttpHeaders.ContentType, ContentType.Application.Json)
+            accept(contentType = ContentType.Application.Json)
+            headers {
+//                parseAuthorizationHeader(token)
+            }
 
-//fun provideClient():HttpClient{
-//
-//}
+        }
+    }
+    return ktorClient
+}

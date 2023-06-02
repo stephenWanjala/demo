@@ -20,37 +20,43 @@ import com.github.stephenWanjala.demo.core.presentation.components.PasswordTextF
 @Composable
 fun SignUpForm(
     onLoginClick: () -> Unit,
-    onSignUpClick: () -> Unit
+    onSignUpClick: () -> Unit,
+    name:String,
+    email:String,
+    password:String,
+    onNameChange:(String)->Unit,
+    onEmailChange:(String)->Unit,
+    onPasswordChange:(String)->Unit,
+    signUpButtonEnabled:Boolean
 ) {
-    val name = remember { mutableStateOf("") }
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         InputTextField(
-            textValue = name.value,
-            onValueChange = { name.value = it },
-            labelText = "name"
+            textValue = name,
+            onValueChange = onNameChange,
+            labelText = "Name"
         )
         InputTextField(
-            textValue = email.value,
-            onValueChange = { email.value = it },
-            labelText = "email"
+            textValue = email,
+            onValueChange = onEmailChange,
+            labelText = "Email"
         )
         PasswordTextField(
-            textValue = password.value,
-            onValueChange = { password.value = it },
-            labelText = "password",
-            placeHolder = "password"
+            textValue = password,
+            onValueChange = onPasswordChange,
+            labelText = "Password",
+            placeHolder = "Password"
         )
         Button(
             onClick = { /* Handle signup logic here */
                 onSignUpClick()
             },
-            modifier = Modifier.padding(end = 16.dp)
+            modifier = Modifier.padding(end = 16.dp),
+            enabled = signUpButtonEnabled
         ) {
             Text("Signup")
         }
@@ -65,3 +71,4 @@ fun SignUpForm(
 
     }
 }
+
